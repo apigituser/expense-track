@@ -1,1 +1,1 @@
-# expense-track
+# Expense Track CLI (in-progress)
