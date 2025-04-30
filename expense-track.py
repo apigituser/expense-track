@@ -24,19 +24,19 @@ def add_expense():
             
 def delete_expense():
     id = args.id
+    with open("expenses.csv", "r+") as csv_file:
+        reader = csv.reader(csv_file)
     print(f"Expense deleted (ID:{id})")
 
-def summarise():
+def summarise():        
     with open("expenses.csv") as csv_file:
         reader = csv.reader(csv_file)
         print(f"Total expenses: ${sum([int(row[3]) for row in reader])}")
 
 if __name__ == "__main__":
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-
-
     parser = argparse.ArgumentParser()
-    parser.add_argument('action')
+    parser.add_argument('action', choices=['list','add','summary','delete'])
     parser.add_argument('--id')
     parser.add_argument('--month')
     parser.add_argument('--description')
@@ -58,8 +58,6 @@ if __name__ == "__main__":
                 summarise()
             case 'delete':
                 delete_expense()
-            case _:
-                print("Invalid Argument")
     else: 
         print("File not found")
         exit(1)
