@@ -10,10 +10,21 @@ def list_expenses():
             print(row)
 
 def add_expense():
-    with open("expenses.csv", "a", newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        writer.writerow([entries+1, date, args.description, args.amount])
-        print(f"Expense added successfully (ID:{id})")
+    entries = 1
+    if file_exists:
+        with open("expenses.csv", "a+", newline='') as file:
+            file.seek(0)
+            reader = csv.reader(file)
+            entries = len([row for row in reader])
+            id_ = entries + 1
+            writer = csv.writer(file)
+            writer.writerow([id_, date, args.description, args.amount])
+            print(f"Expense added successfully (ID:{id_})")
+            return 0
+    with open("expenses.csv", "w", newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([entries, date, args.description, args.amount])
+        print(f"Expense added successfully (ID:{entries})")
 
 def delete_expense():
     with open("expenses.csv", "r+", newline='') as file:
@@ -25,10 +36,15 @@ def delete_expense():
         writer.writerows(expenses)
         print(f"Expense deleted (ID:{args.id})")
 
-def summarise():        
-    with open("expenses.csv") as csv_file:
-        reader = csv.reader(csv_file)
-        print(f"Total expenses: ${sum([int(row[3]) for row in reader])}")
+def summarise():
+    with open("expenses.csv") as file:
+        reader = csv.reader(file)
+        summarisedExpenses = [row for row in reader]
+        if args.month:
+            iso = datetime.date.fromisoformat
+            file.seek(0)
+            summarisedExpenses = [row for row in reader if iso(row[1]).month == args.month]
+    print(f"Total expenses: ${sum([int(row[3]) for row in summarisedExpenses])}")
 
 def parse_args():
     parser = argparse.ArgumentParser("Track your expenses")
@@ -44,7 +60,7 @@ def parse_args():
     delete_parser.add_argument("-i", "--id", metavar="INTEGER", required=True, help="Specify the expense id to be removed")
 
     summary_parser = subparsers.add_parser(name="summary", help="Summarise your expenses")
-    summary_parser.add_argument("-m", "--month", metavar="INTEGER", help="Specify a month (1-12)")
+    summary_parser.add_argument("-m", "--month", type=int, choices=range(1,13), metavar="INTEGER", help="Specify a month (1-12)")
 
     args = parser.parse_args()
     return args
@@ -53,17 +69,15 @@ def parse_args():
 if __name__ == "__main__":
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     args = parse_args()
-    
-    with open("expenses.csv") as csv_file:
-        reader = csv.reader(csv_file)
-        entries = len([row for row in reader])
-    
+
+    file_exists = os.path.isfile("expenses.csv")
+
     match args.action:
         case 'list':
-            list_expenses()
+            if file_exists: list_expenses()
+        case 'summary':
+            if file_exists: summarise()
+        case 'delete':
+            if file_exists: delete_expense()
         case 'add':
             add_expense()
-        case 'summary':
-            summarise()
-        case 'delete':
-            delete_expense()
