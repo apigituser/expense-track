@@ -10,23 +10,20 @@ def list_expenses():
             print(row)
 
 def add_expense():
-    if(os.stat("expenses.csv").st_size == 0):
-        with open("expenses.csv", "w", newline='') as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerow([1, date, args.description, args.amount])
-            print(f"Expense added successfully (ID:1)")
-    else:
-        with open("expenses.csv", "a", newline='') as csv_file:
-            id = entries + 1
-            writer = csv.writer(csv_file)
-            writer.writerow([id, date, args.description, args.amount])
-            print(f"Expense added successfully (ID:{id})")
-            
+    with open("expenses.csv", "a", newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow([entries+1, date, args.description, args.amount])
+        print(f"Expense added successfully (ID:{id})")
+
 def delete_expense():
-    id = args.id
-    with open("expenses.csv", "r+") as csv_file:
-        reader = csv.reader(csv_file)
-    print(f"Expense deleted (ID:{id})")
+    with open("expenses.csv", "r+", newline='') as file:
+        reader = csv.reader(file)
+        expenses = [row for row in reader if row[0] != args.id]
+        file.seek(0)
+        file.truncate()
+        writer = csv.writer(file)
+        writer.writerows(expenses)
+        print(f"Expense deleted (ID:{args.id})")
 
 def summarise():        
     with open("expenses.csv") as csv_file:
@@ -56,6 +53,10 @@ def parse_args():
 if __name__ == "__main__":
     date = datetime.datetime.now().strftime("%Y-%m-%d")
     args = parse_args()
+    
+    with open("expenses.csv") as csv_file:
+        reader = csv.reader(csv_file)
+        entries = len([row for row in reader])
     
     match args.action:
         case 'list':
