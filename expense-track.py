@@ -33,31 +33,36 @@ def summarise():
         reader = csv.reader(csv_file)
         print(f"Total expenses: ${sum([int(row[3]) for row in reader])}")
 
+def parse_args():
+    parser = argparse.ArgumentParser("Track your expenses")
+    subparsers = parser.add_subparsers(dest="action", help="Specify operation to be performed")
+
+    list_parser = subparsers.add_parser(name="list", help="Display the expenses")
+
+    add_parser = subparsers.add_parser(name="add", help="Record a new expense")
+    add_parser.add_argument("-d", "--description", metavar="TEXT", required=True, help="Describe the expense")
+    add_parser.add_argument("-a", "--amount", metavar="DOLLARS", required=True, help="Specify the amount spent")
+    
+    delete_parser = subparsers.add_parser(name="delete", help="Remove an expense")
+    delete_parser.add_argument("-i", "--id", metavar="INTEGER", required=True, help="Specify the expense id to be removed")
+
+    summary_parser = subparsers.add_parser(name="summary", help="Summarise your expenses")
+    summary_parser.add_argument("-m", "--month", metavar="INTEGER", help="Specify a month (1-12)")
+
+    args = parser.parse_args()
+    return args
+
+
 if __name__ == "__main__":
     date = datetime.datetime.now().strftime("%Y-%m-%d")
-    parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['list','add','summary','delete'])
-    parser.add_argument('--id')
-    parser.add_argument('--month')
-    parser.add_argument('--description')
-    parser.add_argument('--amount')
-    args = parser.parse_args()
-
-    file_exists = os.path.isfile("expenses.csv")
-    if file_exists:
-        with open("expenses.csv") as csv_file:
-            reader = csv.reader(csv_file)
-            entries = sum(1 for row in reader)
-
-        match args.action:
-            case 'list':
-                list_expenses()
-            case 'add':
-                add_expense()
-            case 'summary':
-                summarise()
-            case 'delete':
-                delete_expense()
-    else: 
-        print("File not found")
-        exit(1)
+    args = parse_args()
+    
+    match args.action:
+        case 'list':
+            list_expenses()
+        case 'add':
+            add_expense()
+        case 'summary':
+            summarise()
+        case 'delete':
+            delete_expense()
