@@ -2,12 +2,15 @@ import csv
 import os
 import argparse
 import datetime
+import tabulate
 
 def list_expenses():
     with open("expenses.csv") as csv_file:
         reader = csv.reader(csv_file)
-        for row in reader:
-            print(row)
+        data = list(reader)
+        headers = ('ID','Date','Description','Amount')
+        table = tabulate.tabulate(data, headers=headers, colalign=('center','center','center','center'), tablefmt='fancy_grid')
+        print(table)
 
 def add_expense():
     entries = 1
@@ -44,7 +47,7 @@ def summarise():
             iso = datetime.date.fromisoformat
             file.seek(0)
             summarisedExpenses = [row for row in reader if iso(row[1]).month == args.month]
-    print(f"Total expenses: ${sum([int(row[3]) for row in summarisedExpenses])}")
+    print(f"Total Expenses: ${sum([int(row[3]) for row in summarisedExpenses])}")
 
 def parse_args():
     parser = argparse.ArgumentParser("Track your expenses")
