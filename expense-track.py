@@ -32,12 +32,21 @@ def add_expense():
 def delete_expense():
     with open("expenses.csv", "r+", newline='') as file:
         reader = csv.reader(file)
-        expenses = [row for row in reader if row[0] != args.id]
-        file.seek(0)
-        file.truncate()
-        writer = csv.writer(file)
-        writer.writerows(expenses)
-        print(f"Expense deleted (ID:{args.id})")
+        expenses = []
+        exists = False
+        for row in reader:
+            if row[0] == args.id:
+                exists = True
+            else:
+                expenses.append(row)
+        if exists:
+            file.seek(0)
+            file.truncate()
+            writer = csv.writer(file)
+            writer.writerows(expenses)
+            print(f"Expense deleted (ID:{args.id})")
+        else:
+            print(f"Expense with ID {args.id} not found")
 
 def summarise():
     with open("expenses.csv") as file:
