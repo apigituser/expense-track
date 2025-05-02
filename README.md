@@ -30,5 +30,5 @@ Clone this repository using the following command
 ### Summarise expenses (Total)
   ```
   python expense-track summary
-  python expense-track summary --month <MONTH (1-12)>
+  python expense-track summary --month <1-12>
   ```
