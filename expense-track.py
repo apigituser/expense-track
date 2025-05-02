@@ -52,10 +52,11 @@ def summarise():
     with open("expenses.csv") as file:
         reader = csv.reader(file)
         summarisedExpenses = [row for row in reader]
+        currentYear = datetime.date.today().year
         if args.month:
             iso = datetime.date.fromisoformat
             file.seek(0)
-            summarisedExpenses = [row for row in reader if iso(row[1]).month == args.month]
+            summarisedExpenses = [row for row in reader if iso(row[1]).month == args.month and iso(row[1]).year == currentYear]
     print(f"Total Expenses: ${sum([int(row[3]) for row in summarisedExpenses])}")
 
 def parse_args():
