@@ -32,3 +32,5 @@ Clone this repository using the following command
   python expense-track summary
   python expense-track summary --month <1-12>
   ```
+## Roadmap.sh Project URL
+Project link is available [here](https://roadmap.sh/projects/github-user-activity)
