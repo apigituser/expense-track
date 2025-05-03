@@ -37,4 +37,4 @@ Install tabulate using pip
   python expense-track summary --month <1-12>
   ```
 ## Roadmap.sh Project URL
-Project link is available [here](https://roadmap.sh/projects/github-user-activity)
+Project link is available [here](https://roadmap.sh/projects/expense-tracker)
