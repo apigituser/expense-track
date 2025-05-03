@@ -1,10 +1,14 @@
 # Expense Track CLI
 Expense Tracker CLI tool to track your expenses
 
-## Installation
+## Prerequisites
 Clone this repository using the following command
   ```
   git clone https://github.com/apigituser/expense-track
+  ```
+Install tabulate using pip
+  ```
+  pip install tabulate
   ```
 
 ## Functions
